@@ -35,11 +35,17 @@ public class AnimalModel extends AbstractTableModel {
 
 		switch (col) {
 		case 0:
-			return a.getNome();
+			return a.getId();
 		case 1:
 			return a.getEspecie();
 		case 2:
 			return a.getProprietario();
+		case 3:
+			return a.getNome();
+		case 4:
+			return "";
+		case 5:
+			return "";
 		}
 
 		throw new RuntimeException("Coluna " + col + " solicitada, não existe.");
@@ -51,14 +57,16 @@ public class AnimalModel extends AbstractTableModel {
 
 		switch (col) {
 		case 0:
-			return "Nome";
+			return "Id";
 		case 1:
 			return "Espécie";
 		case 2:
 			return "Proprietário";
+		case 3:
+			return "Nome";
 
 		default:
-			return "Erro";
+			return "";
 		}
 
 	}

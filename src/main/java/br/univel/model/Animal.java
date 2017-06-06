@@ -1,7 +1,13 @@
 package br.univel.model;
 
-public class Animal {
+import java.io.Serializable;
 
+public class Animal implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5780519633877337066L;
 	private Long id;
 	private String nome;
 	private String especie;

@@ -1,10 +1,21 @@
 package br.univel.view;
 
-import java.awt.BorderLayout;
 import java.awt.EventQueue;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.List;
 
+import javax.naming.NamingException;
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 import org.jboss.as.quickstarts.ejb.remote.client.RemoteEJBClient;
@@ -13,26 +24,12 @@ import br.univel.dao.AnimalDao;
 import br.univel.model.Animal;
 import br.univel.model.AnimalModel;
 
-import java.awt.GridBagLayout;
-import javax.swing.JLabel;
-import java.awt.GridBagConstraints;
-import javax.swing.JTextField;
-import java.awt.Insets;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JButton;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-
-public class testeTelaPrincipal extends JFrame {
+public class TelaPrincipal extends JFrame {
 
 	private JPanel contentPane;
-	private JTextField textField;
-	private JTextField textField_1;
-	private JTextField textField_2;
+	private JTextField txtNome;
+	private JTextField txtEspecie;
+	private JTextField txtProprietario;
 	private JScrollPane scrollPane;
 	private JTable table;
 	private JButton btnNewButton;
@@ -47,7 +44,7 @@ public class testeTelaPrincipal extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					testeTelaPrincipal frame = new testeTelaPrincipal();
+					TelaPrincipal frame = new TelaPrincipal();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -59,7 +56,9 @@ public class testeTelaPrincipal extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public testeTelaPrincipal() {
+	public TelaPrincipal() {
+		
+		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
@@ -80,15 +79,15 @@ public class testeTelaPrincipal extends JFrame {
 		gbc_lblNome.gridy = 1;
 		contentPane.add(lblNome, gbc_lblNome);
 
-		textField = new JTextField();
-		GridBagConstraints gbc_textField = new GridBagConstraints();
-		gbc_textField.gridwidth = 2;
-		gbc_textField.insets = new Insets(0, 0, 5, 5);
-		gbc_textField.fill = GridBagConstraints.HORIZONTAL;
-		gbc_textField.gridx = 1;
-		gbc_textField.gridy = 1;
-		contentPane.add(textField, gbc_textField);
-		textField.setColumns(10);
+		txtNome = new JTextField();
+		GridBagConstraints gbc_txtNome = new GridBagConstraints();
+		gbc_txtNome.gridwidth = 2;
+		gbc_txtNome.insets = new Insets(0, 0, 5, 5);
+		gbc_txtNome.fill = GridBagConstraints.HORIZONTAL;
+		gbc_txtNome.gridx = 1;
+		gbc_txtNome.gridy = 1;
+		contentPane.add(txtNome, gbc_txtNome);
+		txtNome.setColumns(10);
 
 		JLabel lblEspcie = new JLabel("Espécie");
 		GridBagConstraints gbc_lblEspcie = new GridBagConstraints();
@@ -98,15 +97,15 @@ public class testeTelaPrincipal extends JFrame {
 		gbc_lblEspcie.gridy = 2;
 		contentPane.add(lblEspcie, gbc_lblEspcie);
 
-		textField_1 = new JTextField();
-		GridBagConstraints gbc_textField_1 = new GridBagConstraints();
-		gbc_textField_1.gridwidth = 2;
-		gbc_textField_1.insets = new Insets(0, 0, 5, 5);
-		gbc_textField_1.fill = GridBagConstraints.HORIZONTAL;
-		gbc_textField_1.gridx = 1;
-		gbc_textField_1.gridy = 2;
-		contentPane.add(textField_1, gbc_textField_1);
-		textField_1.setColumns(10);
+		txtEspecie = new JTextField();
+		GridBagConstraints gbc_txtEspecie = new GridBagConstraints();
+		gbc_txtEspecie.gridwidth = 2;
+		gbc_txtEspecie.insets = new Insets(0, 0, 5, 5);
+		gbc_txtEspecie.fill = GridBagConstraints.HORIZONTAL;
+		gbc_txtEspecie.gridx = 1;
+		gbc_txtEspecie.gridy = 2;
+		contentPane.add(txtEspecie, gbc_txtEspecie);
+		txtEspecie.setColumns(10);
 
 		JLabel lblProprietrio = new JLabel("Proprietário");
 		GridBagConstraints gbc_lblProprietrio = new GridBagConstraints();
@@ -116,15 +115,15 @@ public class testeTelaPrincipal extends JFrame {
 		gbc_lblProprietrio.gridy = 3;
 		contentPane.add(lblProprietrio, gbc_lblProprietrio);
 
-		textField_2 = new JTextField();
-		GridBagConstraints gbc_textField_2 = new GridBagConstraints();
-		gbc_textField_2.gridwidth = 2;
-		gbc_textField_2.insets = new Insets(0, 0, 5, 5);
-		gbc_textField_2.fill = GridBagConstraints.HORIZONTAL;
-		gbc_textField_2.gridx = 1;
-		gbc_textField_2.gridy = 3;
-		contentPane.add(textField_2, gbc_textField_2);
-		textField_2.setColumns(10);
+		txtProprietario = new JTextField();
+		GridBagConstraints gbc_txtProprietario = new GridBagConstraints();
+		gbc_txtProprietario.gridwidth = 2;
+		gbc_txtProprietario.insets = new Insets(0, 0, 5, 5);
+		gbc_txtProprietario.fill = GridBagConstraints.HORIZONTAL;
+		gbc_txtProprietario.gridx = 1;
+		gbc_txtProprietario.gridy = 3;
+		contentPane.add(txtProprietario, gbc_txtProprietario);
+		txtProprietario.setColumns(10);
 
 		scrollPane = new JScrollPane();
 		GridBagConstraints gbc_scrollPane = new GridBagConstraints();
@@ -142,6 +141,13 @@ public class testeTelaPrincipal extends JFrame {
 		btnNewButton_2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 
+				Animal animal = new Animal();
+				animal.setNome(txtNome.getText());
+				animal.setProprietario(txtProprietario.getText());
+				animal.setEspecie(txtEspecie.getText());
+
+				dao.create(animal);
+
 			}
 		});
 		GridBagConstraints gbc_btnNewButton_2 = new GridBagConstraints();
@@ -151,6 +157,12 @@ public class testeTelaPrincipal extends JFrame {
 		contentPane.add(btnNewButton_2, gbc_btnNewButton_2);
 
 		btnNewButton_1 = new JButton("Salvar");
+		btnNewButton_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				
+			}
+		});
 		GridBagConstraints gbc_btnNewButton_1 = new GridBagConstraints();
 		gbc_btnNewButton_1.insets = new Insets(0, 0, 0, 5);
 		gbc_btnNewButton_1.gridx = 3;
@@ -163,9 +175,16 @@ public class testeTelaPrincipal extends JFrame {
 		gbc_btnNewButton.gridy = 5;
 		contentPane.add(btnNewButton, gbc_btnNewButton);
 
-		
-		
-		configuratabela(new RemoteEJBClient().getAll());
+		try {
+			
+			dao = RemoteEJBClient.lookupRemoteStatelessCalculator();
+			
+		} catch (NamingException e) {
+			e.printStackTrace();
+		}
+
+		configuratabela(dao.getAll());
+
 
 	}
 
