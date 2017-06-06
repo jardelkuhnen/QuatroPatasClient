@@ -1,5 +1,6 @@
 package br.univel.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
@@ -11,9 +12,9 @@ public class AnimalModel extends AbstractTableModel {
 	 */
 	private static final long serialVersionUID = -6606242254644688342L;
 
-	private List<Animal> list;
+	private ArrayList<Animal> list;
 
-	public AnimalModel(List animais) {
+	public AnimalModel(ArrayList animais) {
 		this.list = animais;
 	}
 
@@ -42,13 +43,9 @@ public class AnimalModel extends AbstractTableModel {
 			return a.getProprietario();
 		case 3:
 			return a.getNome();
-		case 4:
-			return "";
-		case 5:
+		default:
 			return "";
 		}
-
-		throw new RuntimeException("Coluna " + col + " solicitada, não existe.");
 
 	}
 

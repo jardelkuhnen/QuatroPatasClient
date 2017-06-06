@@ -6,6 +6,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.naming.NamingException;
@@ -57,8 +58,7 @@ public class TelaPrincipal extends JFrame {
 	 * Create the frame.
 	 */
 	public TelaPrincipal() {
-		
-		
+
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
@@ -159,8 +159,7 @@ public class TelaPrincipal extends JFrame {
 		btnNewButton_1 = new JButton("Salvar");
 		btnNewButton_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				
-				
+
 			}
 		});
 		GridBagConstraints gbc_btnNewButton_1 = new GridBagConstraints();
@@ -176,19 +175,18 @@ public class TelaPrincipal extends JFrame {
 		contentPane.add(btnNewButton, gbc_btnNewButton);
 
 		try {
-			
+
 			dao = RemoteEJBClient.lookupRemoteStatelessCalculator();
-			
+
 		} catch (NamingException e) {
 			e.printStackTrace();
 		}
 
 		configuratabela(dao.getAll());
 
-
 	}
 
-	private void configuratabela(List<Animal> list) {
+	private void configuratabela(ArrayList<Animal> list) {
 
 		AnimalModel model = new AnimalModel(list);
 		table.setModel(model);
