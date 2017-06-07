@@ -6,6 +6,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +14,7 @@ import javax.naming.NamingException;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -25,18 +27,24 @@ import br.univel.dao.AnimalDao;
 import br.univel.model.Animal;
 import br.univel.model.AnimalModel;
 
-public class TelaPrincipal extends JFrame {
+public class TelaPrincipal extends JFrame implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JTextField txtNome;
 	private JTextField txtEspecie;
 	private JTextField txtProprietario;
 	private JScrollPane scrollPane;
 	private JTable table;
-	private JButton btnNewButton;
-	private JButton btnNewButton_1;
-	private JButton btnNewButton_2;
+	private JButton btnExcluir;
+	private JButton btnEditar;
+	private JButton btnNovo;
 	private AnimalDao dao;
+	private AnimalModel model;
+	private Animal animalSelecionado;
 
 	/**
 	 * Launch the application.
@@ -137,42 +145,97 @@ public class TelaPrincipal extends JFrame {
 		table = new JTable();
 		scrollPane.setViewportView(table);
 
-		btnNewButton_2 = new JButton("Novo");
-		btnNewButton_2.addActionListener(new ActionListener() {
+		btnNovo = new JButton("Novo");
+		btnNovo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 
-				Animal animal = new Animal();
-				animal.setNome(txtNome.getText());
-				animal.setProprietario(txtProprietario.getText());
-				animal.setEspecie(txtEspecie.getText());
+				if (animalSelecionado == null) {
 
-				dao.create(animal);
+					if (txtNome.getText().equals("") || txtEspecie.getText().equals("")) {
+						JOptionPane.showMessageDialog(null, "Preencha corretamente os campos");
+					} else {
+
+						Animal animal = new Animal();
+						animal.setNome(txtNome.getText());
+						animal.setProprietario(txtProprietario.getText());
+						animal.setEspecie(txtEspecie.getText());
+
+						dao.create(animal);
+						limparCampos();
+
+						limparCampos();
+
+						updateTable();
+					}
+				} else {
+
+					animalSelecionado.setNome(txtNome.getText());
+					animalSelecionado.setEspecie(txtEspecie.getText());
+					animalSelecionado.setProprietario(txtProprietario.getText());
+
+					dao.edit(animalSelecionado);
+
+					animalSelecionado = null;
+
+					limparCampos();
+
+					updateTable();
+
+				}
+			}
+		});
+		GridBagConstraints gbc_btnNovo = new GridBagConstraints();
+		gbc_btnNovo.insets = new Insets(0, 0, 0, 5);
+		gbc_btnNovo.gridx = 2;
+		gbc_btnNovo.gridy = 5;
+		contentPane.add(btnNovo, gbc_btnNovo);
+
+		btnEditar = new JButton("Editar");
+		btnEditar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+
+				int animalEdit = table.getSelectedRow() + 1;
+
+				if (animalEdit <= 0) {
+					JOptionPane.showMessageDialog(null, "Selecione um cliente da tabela para editar");
+				} else {
+
+					Animal animal = dao.getById(animalEdit);
+
+					txtEspecie.setText(animal.getEspecie());
+					txtNome.setText(animal.getNome());
+					txtProprietario.setText(animal.getProprietario());
+				}
 
 			}
 		});
-		GridBagConstraints gbc_btnNewButton_2 = new GridBagConstraints();
-		gbc_btnNewButton_2.insets = new Insets(0, 0, 0, 5);
-		gbc_btnNewButton_2.gridx = 2;
-		gbc_btnNewButton_2.gridy = 5;
-		contentPane.add(btnNewButton_2, gbc_btnNewButton_2);
+		GridBagConstraints gbc_btnEditar = new GridBagConstraints();
+		gbc_btnEditar.insets = new Insets(0, 0, 0, 5);
+		gbc_btnEditar.gridx = 3;
+		gbc_btnEditar.gridy = 5;
+		contentPane.add(btnEditar, gbc_btnEditar);
 
-		btnNewButton_1 = new JButton("Salvar");
-		btnNewButton_1.addActionListener(new ActionListener() {
+		btnExcluir = new JButton("Excluir");
+		btnExcluir.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+
+				int delete = table.getSelectedRow() + 1;
+
+				if (delete <= 0) {
+					JOptionPane.showMessageDialog(null, "Selecione um cliente");
+				} else {
+
+					Animal animalDelete = dao.getById(delete);
+
+					dao.delete(animalDelete);
+				}
 
 			}
 		});
-		GridBagConstraints gbc_btnNewButton_1 = new GridBagConstraints();
-		gbc_btnNewButton_1.insets = new Insets(0, 0, 0, 5);
-		gbc_btnNewButton_1.gridx = 3;
-		gbc_btnNewButton_1.gridy = 5;
-		contentPane.add(btnNewButton_1, gbc_btnNewButton_1);
-
-		btnNewButton = new JButton("Excluir");
-		GridBagConstraints gbc_btnNewButton = new GridBagConstraints();
-		gbc_btnNewButton.gridx = 4;
-		gbc_btnNewButton.gridy = 5;
-		contentPane.add(btnNewButton, gbc_btnNewButton);
+		GridBagConstraints gbc_btnExcluir = new GridBagConstraints();
+		gbc_btnExcluir.gridx = 4;
+		gbc_btnExcluir.gridy = 5;
+		contentPane.add(btnExcluir, gbc_btnExcluir);
 
 		try {
 
@@ -182,14 +245,22 @@ public class TelaPrincipal extends JFrame {
 			e.printStackTrace();
 		}
 
-		configuratabela(dao.getAll());
+		updateTable();
 
 	}
 
-	private void configuratabela(ArrayList<Animal> list) {
+	protected void updateTable() {
 
-		AnimalModel model = new AnimalModel(list);
+		model = new AnimalModel(dao.getAll());
 		table.setModel(model);
+	}
+
+	protected void limparCampos() {
+
+		txtEspecie.setText("");
+		txtNome.setText("");
+		txtProprietario.setText("");
+
 	}
 
 }

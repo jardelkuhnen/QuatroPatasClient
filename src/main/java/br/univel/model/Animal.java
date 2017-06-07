@@ -8,16 +8,16 @@ public class Animal implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = -5780519633877337066L;
-	private Long id;
+	private int id;
 	private String nome;
 	private String especie;
 	private String proprietario;
 
-	public Long getId() {
+	public int getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 

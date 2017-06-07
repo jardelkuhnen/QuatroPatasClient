@@ -20,13 +20,12 @@ public class AnimalModel extends AbstractTableModel {
 
 	@Override
 	public int getColumnCount() {
-		return list.size();
+		return 4;
 	}
 
 	@Override
 	public int getRowCount() {
-
-		return 3;
+		return list.size();
 	}
 
 	@Override
@@ -38,11 +37,11 @@ public class AnimalModel extends AbstractTableModel {
 		case 0:
 			return a.getId();
 		case 1:
-			return a.getEspecie();
-		case 2:
-			return a.getProprietario();
-		case 3:
 			return a.getNome();
+		case 2:
+			return a.getEspecie();
+		case 3:
+			return a.getProprietario();
 		default:
 			return "";
 		}
@@ -56,11 +55,11 @@ public class AnimalModel extends AbstractTableModel {
 		case 0:
 			return "Id";
 		case 1:
-			return "Espécie";
-		case 2:
-			return "Proprietário";
-		case 3:
 			return "Nome";
+		case 2:
+			return "Espécie";
+		case 3:
+			return "Proprietário";
 
 		default:
 			return "";
