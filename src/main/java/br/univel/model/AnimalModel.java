@@ -20,7 +20,7 @@ public class AnimalModel extends AbstractTableModel {
 
 	@Override
 	public int getColumnCount() {
-		return 4;
+		return 5;
 	}
 
 	@Override
@@ -42,6 +42,7 @@ public class AnimalModel extends AbstractTableModel {
 			return a.getEspecie();
 		case 3:
 			return a.getProprietario();
+		case 4: return a;
 		default:
 			return "";
 		}

@@ -7,8 +7,6 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.naming.NamingException;
 import javax.swing.JButton;
@@ -19,6 +17,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EmptyBorder;
 
 import org.jboss.as.quickstarts.ejb.remote.client.RemoteEJBClient;
@@ -45,6 +46,7 @@ public class TelaPrincipal extends JFrame implements Serializable {
 	private AnimalDao dao;
 	private AnimalModel model;
 	private Animal animalSelecionado;
+	private int idAniEdit;
 
 	/**
 	 * Launch the application.
@@ -55,6 +57,7 @@ public class TelaPrincipal extends JFrame implements Serializable {
 				try {
 					TelaPrincipal frame = new TelaPrincipal();
 					frame.setVisible(true);
+					frame.setLocationRelativeTo(null);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -67,6 +70,18 @@ public class TelaPrincipal extends JFrame implements Serializable {
 	 */
 	public TelaPrincipal() {
 
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+
+			for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+				if ("Nimbus".equals(info.getName())) {
+					UIManager.setLookAndFeel(info.getClassName());
+					break;
+				}
+			}
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
@@ -152,7 +167,7 @@ public class TelaPrincipal extends JFrame implements Serializable {
 				if (animalSelecionado == null) {
 
 					if (txtNome.getText().equals("") || txtEspecie.getText().equals("")) {
-						JOptionPane.showMessageDialog(null, "Preencha corretamente os campos");
+						JOptionPane.showMessageDialog(TelaPrincipal.this, "Preencha corretamente os campos");
 					} else {
 
 						Animal animal = new Animal();
@@ -169,6 +184,7 @@ public class TelaPrincipal extends JFrame implements Serializable {
 					}
 				} else {
 
+					animalSelecionado.setId(idAniEdit);
 					animalSelecionado.setNome(txtNome.getText());
 					animalSelecionado.setEspecie(txtEspecie.getText());
 					animalSelecionado.setProprietario(txtProprietario.getText());
@@ -192,19 +208,23 @@ public class TelaPrincipal extends JFrame implements Serializable {
 
 		btnEditar = new JButton("Editar");
 		btnEditar.addActionListener(new ActionListener() {
+
 			public void actionPerformed(ActionEvent arg0) {
 
-				int animalEdit = table.getSelectedRow() + 1;
+				idAniEdit = table.getSelectedRow() + 1;
 
-				if (animalEdit <= 0) {
-					JOptionPane.showMessageDialog(null, "Selecione um cliente da tabela para editar");
+				if (idAniEdit <= 0) {
+					JOptionPane.showMessageDialog(TelaPrincipal.this, "Selecione um cliente da tabela para editar");
 				} else {
 
-					Animal animal = dao.getById(animalEdit);
 
-					txtEspecie.setText(animal.getEspecie());
-					txtNome.setText(animal.getNome());
-					txtProprietario.setText(animal.getProprietario());
+					Animal a = (Animal) table.getModel().getValueAt(table.getSelectedRow(), 4);
+
+					Animal aniEdit = dao.getById(a.getId());
+
+					txtEspecie.setText(aniEdit.getEspecie());
+					txtNome.setText(aniEdit.getNome());
+					txtProprietario.setText(aniEdit.getProprietario());
 				}
 
 			}
@@ -219,15 +239,20 @@ public class TelaPrincipal extends JFrame implements Serializable {
 		btnExcluir.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 
-				int delete = table.getSelectedRow() + 1;
+				int delete = (int) table.getModel().getValueAt(table.getSelectedRow(), 0);
 
 				if (delete <= 0) {
-					JOptionPane.showMessageDialog(null, "Selecione um cliente");
+					JOptionPane.showMessageDialog(TelaPrincipal.this, "Selecione um cliente");
 				} else {
 
 					Animal animalDelete = dao.getById(delete);
 
 					dao.delete(animalDelete);
+
+					JOptionPane.showMessageDialog(TelaPrincipal.this,
+							"Animal " + animalDelete.getNome() + " removido com sucesso!!");
+
+					updateTable();
 				}
 
 			}
