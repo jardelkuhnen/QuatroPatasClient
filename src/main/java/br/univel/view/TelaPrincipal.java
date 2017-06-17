@@ -6,6 +6,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.Serializable;
 
 import javax.naming.NamingException;
@@ -46,7 +48,7 @@ public class TelaPrincipal extends JFrame implements Serializable {
 	private AnimalDao dao;
 	private AnimalModel model;
 	private Animal animalSelecionado;
-	private int idAniEdit;
+	private int idAnimalEditar;
 
 	/**
 	 * Launch the application.
@@ -139,6 +141,21 @@ public class TelaPrincipal extends JFrame implements Serializable {
 		contentPane.add(lblProprietrio, gbc_lblProprietrio);
 
 		txtProprietario = new JTextField();
+		txtProprietario.addKeyListener(new KeyAdapter() {
+
+			@Override
+			public void keyPressed(KeyEvent e) {
+
+				if (e.getKeyCode() == e.VK_ENTER) {
+
+					createUpdate();
+					txtNome.requestFocus();
+
+				}
+
+			}
+
+		});
 		GridBagConstraints gbc_txtProprietario = new GridBagConstraints();
 		gbc_txtProprietario.gridwidth = 2;
 		gbc_txtProprietario.insets = new Insets(0, 0, 5, 5);
@@ -164,41 +181,10 @@ public class TelaPrincipal extends JFrame implements Serializable {
 		btnNovo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 
-				if (animalSelecionado == null) {
+				createUpdate();
 
-					if (txtNome.getText().equals("") || txtEspecie.getText().equals("")) {
-						JOptionPane.showMessageDialog(TelaPrincipal.this, "Preencha corretamente os campos");
-					} else {
-
-						Animal animal = new Animal();
-						animal.setNome(txtNome.getText());
-						animal.setProprietario(txtProprietario.getText());
-						animal.setEspecie(txtEspecie.getText());
-
-						dao.create(animal);
-						limparCampos();
-
-						limparCampos();
-
-						updateTable();
-					}
-				} else {
-
-					animalSelecionado.setId(idAniEdit);
-					animalSelecionado.setNome(txtNome.getText());
-					animalSelecionado.setEspecie(txtEspecie.getText());
-					animalSelecionado.setProprietario(txtProprietario.getText());
-
-					dao.edit(animalSelecionado);
-
-					animalSelecionado = null;
-
-					limparCampos();
-
-					updateTable();
-
-				}
 			}
+
 		});
 		GridBagConstraints gbc_btnNovo = new GridBagConstraints();
 		gbc_btnNovo.insets = new Insets(0, 0, 0, 5);
@@ -211,21 +197,21 @@ public class TelaPrincipal extends JFrame implements Serializable {
 
 			public void actionPerformed(ActionEvent arg0) {
 
-				idAniEdit = table.getSelectedRow() + 1;
-
-				if (idAniEdit <= 0) {
-					JOptionPane.showMessageDialog(TelaPrincipal.this, "Selecione um cliente da tabela para editar");
-				} else {
-
-
-					Animal a = (Animal) table.getModel().getValueAt(table.getSelectedRow(), 4);
-
-					Animal aniEdit = dao.getById(a.getId());
-
-					txtEspecie.setText(aniEdit.getEspecie());
-					txtNome.setText(aniEdit.getNome());
-					txtProprietario.setText(aniEdit.getProprietario());
+				try {
+					idAnimalEditar = (int) table.getModel().getValueAt(table.getSelectedRow(), 0);
+				} catch (Exception e) {
+					JOptionPane.showMessageDialog(TelaPrincipal.this, "Selecione um registro para editar", "Atenção",
+							JOptionPane.ERROR_MESSAGE);
+					return;
 				}
+
+				Animal animalEditar = dao.getById(idAnimalEditar);
+
+				txtEspecie.setText(animalEditar.getEspecie());
+				txtNome.setText(animalEditar.getNome());
+				txtProprietario.setText(animalEditar.getProprietario());
+
+				animalSelecionado = animalEditar;
 
 			}
 		});
@@ -239,21 +225,24 @@ public class TelaPrincipal extends JFrame implements Serializable {
 		btnExcluir.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 
-				int delete = (int) table.getModel().getValueAt(table.getSelectedRow(), 0);
+				int delete = 0;
 
-				if (delete <= 0) {
-					JOptionPane.showMessageDialog(TelaPrincipal.this, "Selecione um cliente");
-				} else {
-
-					Animal animalDelete = dao.getById(delete);
-
-					dao.delete(animalDelete);
-
-					JOptionPane.showMessageDialog(TelaPrincipal.this,
-							"Animal " + animalDelete.getNome() + " removido com sucesso!!");
-
-					updateTable();
+				try {
+					delete = (int) table.getModel().getValueAt(table.getSelectedRow(), 0);
+				} catch (Exception e) {
+					JOptionPane.showMessageDialog(TelaPrincipal.this, "Selecione um registro para excluir!", "Atenção",
+							JOptionPane.ERROR_MESSAGE);
+					return;
 				}
+
+				Animal animalDelete = dao.getById(delete);
+
+				dao.delete(animalDelete);
+
+				JOptionPane.showMessageDialog(TelaPrincipal.this,
+						"Animal " + animalDelete.getNome() + " removido com sucesso!!");
+
+				updateTable();
 
 			}
 		});
@@ -286,6 +275,43 @@ public class TelaPrincipal extends JFrame implements Serializable {
 		txtNome.setText("");
 		txtProprietario.setText("");
 
+	}
+
+	private void createUpdate() {
+		if (animalSelecionado == null) {
+
+			if (txtNome.getText().equals("") || txtEspecie.getText().equals("")) {
+				JOptionPane.showMessageDialog(TelaPrincipal.this, "Preencha corretamente os campos");
+			} else {
+
+				Animal animal = new Animal();
+				animal.setNome(txtNome.getText());
+				animal.setProprietario(txtProprietario.getText());
+				animal.setEspecie(txtEspecie.getText());
+
+				dao.create(animal);
+				limparCampos();
+
+				limparCampos();
+
+				updateTable();
+			}
+		} else {
+
+			animalSelecionado.setId(idAnimalEditar);
+			animalSelecionado.setNome(txtNome.getText());
+			animalSelecionado.setEspecie(txtEspecie.getText());
+			animalSelecionado.setProprietario(txtProprietario.getText());
+
+			dao.edit(animalSelecionado);
+
+			animalSelecionado = null;
+
+			limparCampos();
+
+			updateTable();
+
+		}
 	}
 
 }
